@@ -17,6 +17,8 @@
             cursor: pointer;
         }
     </style>
+
+    <script src="https://code.jquery.com/jquery-4.0.0.min.js"></script>
 </head>
 
 <body>
@@ -495,53 +497,45 @@
     </table>
 
     <script>
-    let clickElements = [];
-    let elements = document.getElementsByTagName("tr");
-    let selectionText = document.getElementById("selection");
+        function refreshSelectionText(count){
+            if(count > 1)
+                $("#selection").text(count + " éléments sélectionnés");
+            else 
+                $("#selection").text(count + " élément sélectionné");        
+        }
+            
+        function changeStyle(element, backgroundColor, fontWeight, border){
+            if(backgroundColor!== null){
+                $(element).css("background-color", backgroundColor);
+            }
+            if(fontWeight !== null){
+                $(element).css("font-weight", fontWeight);
+            }
+            if(border !== null){
+                $(element).css("border", border);
+            }
+        }
     
-    let changerTxtSel = function(nbElement) {
-        if(nbElement > 1)
-            selectionText.innerText = nbElement+" éléments sélectionnés";
-        else
-            selectionText.innerText = nbElement+" élément sélectionné";
-    };
-
-    let changeStyle = function(element, backgroundColor, fontWeight, border){
-	if (backgroundColor !== null) element.style.setProperty("background-color", backgroundColor);
-
-        if (fontWeight !== null) element.style.setProperty("font-weight", fontWeight);
-
-	if (border !== null) element.style.setProperty("border", border);
-    };
-
-    for(let i = 0;i<elements.length;i++){
-        let element = elements[i];
-
-        element.addEventListener("mouseover", function(event){
-            changeStyle(this, null, null, "1px solid #888");
-        });
-    
-        element.addEventListener("mouseout", function(event){
-            this.style.removeProperty("border");
-        });
-
-        element.addEventListener("click", function(event){
-
-
+        let clickElements = [];
+         
+        $("tr").on("click",function(){
             let target = this;
             let targetIndex = clickElements.indexOf(target);
             if(targetIndex === -1){
                 changeStyle(target, "lightblue", "900", null);
                 clickElements.push(target);
-		changerTxtSel(clickElements.length)
+                refreshSelectionText(clickElements.length);
             }
             else{
                 changeStyle(target, "white", "500", null);
                 clickElements.splice(targetIndex,1);
-		changerTxtSel(clickElements.length)
+                refreshSelectionText(clickElements.length);
             }
-        });
-    }
+        }).on("mouseover", function(){
+            changeStyle(this, null, null, "1px solid #888");
+        }).on("mouseout", function(){
+            changeStyle(this, null, null, "");       
+        });        
     </script>
 
 
