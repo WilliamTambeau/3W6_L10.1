@@ -4,21 +4,12 @@
     <meta charset="UTF-8" />
 
 <head>
-    <style type="text/css">
-        table {
-            border-collapse: collapse;
-        }
 
-        tr:hover td {
-            background: #ccc;
-        }
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
-        tr {
-            cursor: pointer;
-        }
-    </style>
+    <script type="text/javascript" src="https://cdn.datatables.net/2.3.8/js/dataTables.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.3.8/css/dataTables.dataTables.min.css">
 
-    <script src="https://code.jquery.com/jquery-4.0.0.min.js"></script>
 </head>
 
 <body>
@@ -224,6 +215,9 @@
             </tr>
             <tr>
                 <td>Doris Wilder</td>
+		<td>FooBar</td>
+		<td>FooBar</td>
+		<td>61</td>
                 <td>2009/10/09</td>
                 <td>$1,200,000</td>
             </tr>
@@ -497,45 +491,47 @@
     </table>
 
     <script>
-        function refreshSelectionText(count){
+	/*
+        $('table').DataTable();
+	*/
+
+	function refreshSelectionText(count){
             if(count > 1)
                 $("#selection").text(count + " éléments sélectionnés");
             else 
                 $("#selection").text(count + " élément sélectionné");        
         }
-            
-        function changeStyle(element, backgroundColor, fontWeight, border){
-            if(backgroundColor!== null){
-                $(element).css("background-color", backgroundColor);
+
+	const table = $('table').DataTable({
+            "language": {
+                "lengthMenu": "Affichage de _MENU_ enregistrements par page",
+                "zeroRecords": "Rien trouvé… Désolé! ",
+                "info": "Affichage de la page _PAGE_ de _PAGES_",
+                "infoEmpty": "Aucun enregistrement disponible ",
+                "infoFiltered": "(filtré à partir d’un maximum de _MAX_ enregistrement)" ,
+                "search":"Recherche: "
             }
-            if(fontWeight !== null){
-                $(element).css("font-weight", fontWeight);
-            }
-            if(border !== null){
-                $(element).css("border", border);
-            }
+        });
+
+
+	function refreshSelectionText(count){ // Notre fct qui compte le nombre de lignes sélectionnées
+        if(count > 1)
+            $("#selection").text(count+" éléments sélectionnés");
+        else 
+            $("#selection").text(count+" élément sélectionné");  
         }
-    
-        let clickElements = [];
-         
-        $("tr").on("click",function(){
-            let target = this;
-            let targetIndex = clickElements.indexOf(target);
-            if(targetIndex === -1){
-                changeStyle(target, "lightblue", "900", null);
-                clickElements.push(target);
-                refreshSelectionText(clickElements.length);
-            }
-            else{
-                changeStyle(target, "white", "500", null);
-                clickElements.splice(targetIndex,1);
-                refreshSelectionText(clickElements.length);
-            }
-        }).on("mouseover", function(){
-            changeStyle(this, null, null, "1px solid #888");
-        }).on("mouseout", function(){
-            changeStyle(this, null, null, "");       
-        });        
+        // On crée l'événement click sur les tr de la table. Le paramètre e est event.
+        // On ajoute la classe selected sur l’élément tr sélectionné avec toggle qui ajoute une classe si 
+        // elle n'existe pas ou la retire si elle existe . 
+        // Ensuite on appel notre fonction refreshSelectionText. table.rows('.selected').data() va 
+        // retourner un tableau des lignes sélectionnées et ensuite on utilise .length pour calculer
+        // le nombre de lignes sélectionnées.
+        table.on('click', 'tbody tr', function (e) {
+            e.currentTarget.classList.toggle('selected');
+            refreshSelectionText(table.rows('.selected').data().length);; 
+        });
+
+
     </script>
 
 
